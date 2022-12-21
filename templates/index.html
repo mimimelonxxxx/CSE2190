@@ -13,12 +13,11 @@
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
               <div class="navbar-nav">
                 <a class="nav-link active" href="#">Upload File <span class="sr-only">(current)</span></a>
-                <a class="nav-link" href="#">View Data</a>
+                <a class="nav-link" href="#">View All Data</a>
                 <form class="form-inline">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search for a Member" aria-label="Search">
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
                   </form>
-                
               </div>
             </div>
           </nav>
@@ -30,17 +29,32 @@
                     <p class="lead">Welcome to the Wage Calculator! </p>
                     <h2>Upload New Data</h2>
                     <form method="POST" action="/" enctype = "multipart/form-data">
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile" name = "Member Hours">
-                            <label class="custom-file-label" for="customFile">Choose Member Hours file</label>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+                            </div>
+                            <div class="custom-file">
+                              <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+                              <label class="custom-file-label" for="inputGroupFile01">Choose Member Hours file</label>
+                            </div>
                           </div>
-                          <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile" name = "Overtime">
-                            <label class="custom-file-label" for="customFile">Choose Overtime file</label>
+                          <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+                            </div>
+                            <div class="custom-file">
+                              <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+                              <label class="custom-file-label" for="inputGroupFile01">Choose Overtime file</label>
+                            </div>
                           </div>
-                          <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="customFile" name = "Total Hours">
-                            <label class="custom-file-label" for="customFile">Choose Total Hours file</label>
+                          <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+                            </div>
+                            <div class="custom-file">
+                              <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
+                              <label class="custom-file-label" for="inputGroupFile01">Choose Total Hours file</label>
+                            </div>
                           </div>
                         <input type="submit" class="btn btn-primary" value="Submit Files">
                     </form>
