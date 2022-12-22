@@ -17,11 +17,45 @@ if (Path.cwd()/ DBNAME).exists():
 
 app = Flask(__name__)
 ### FLASK ### 
-@app.route("/")
+@app.route("/index.html", methods=["GET", "POST"])
 def index():
+    """
+    renders the index.html file in flask 
+    :return: renders file 
+    """
+    ALERT = ""
+    if request.form:
+        MEMBERHOURS = request.form.get("inputMemberHours")
+        OVETIME = request.form.get("inputOvertimeFile")
+        TOTALHOURS = request.form.get("inputTotalHoursFile")
     return render_template("index.html")
 
+@app.route("/data.html", methods=["GET", "POST"])
+def data():
+    """
+    renders the data.html file in flask 
+    :return: renders file 
+    """
+    return render_template("data.html")
+
 ### SQLITE ###
+def createMemberHours():
+    """
+    creates table for the member hours file
+    :return: None
+    """
+    global DBNAME
+    CONNECTION = sqlite3.connect(DBNAME)
+    CURSOR = CONNECTION.cursor()
+    CURSOR.execute("""
+        CREATE TABLE 
+            member_hours (
+                member_name TEXT NOT NULL,
+                total_hours INTEGER NOT NULL,
+            );
+    """)
+    CONNECTION.commit()
+    CONNECTION.close()
 
 # INPUTS # 
 

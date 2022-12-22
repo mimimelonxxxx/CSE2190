@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <title>
-            Flask contacts app
+            Wages Calculator 
         </title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -12,8 +12,8 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
               <div class="navbar-nav">
-                <a class="nav-link active" href="#">Upload File <span class="sr-only">(current)</span></a>
-                <a class="nav-link" href="#">View All Data</a>
+                <a class="nav-link active" href="index.html">Upload File <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="data.html">View All Data</a>
                 <form class="form-inline">
                     <input class="form-control mr-sm-2" type="search" placeholder="Search for a Member" aria-label="Search">
                     <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
@@ -29,35 +29,31 @@
                     <p class="lead">Welcome to the Wage Calculator! </p>
                     <h2>Upload New Data</h2>
                     <form method="POST" action="/" enctype = "multipart/form-data">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
-                            </div>
+                      <div class="input-group mb-3">
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" id="inputMemberHours" aria-describedby="inputGroupFileAddon01" accept=".csv, .txt">
+                          <label class="custom-file-label" for="inputMemberHours" aria-describedby="inputGroupFileAddon02">Choose Member Hours file</label>
+                        </div>
+                      </div>
+                          <div class="input-group mb-3">
                             <div class="custom-file">
-                              <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
-                              <label class="custom-file-label" for="inputGroupFile01">Choose Member Hours file</label>
+                              <input type="file" class="custom-file-input" id="inputOvertimeFile" aria-describedby="inputGroupFileAddon01" accept=".csv, .txt">
+                              <label class="custom-file-label" for="inputOvertimeFile">Choose Overtime file</label>
                             </div>
                           </div>
                           <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
-                            </div>
                             <div class="custom-file">
-                              <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
-                              <label class="custom-file-label" for="inputGroupFile01">Choose Overtime file</label>
-                            </div>
-                          </div>
-                          <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                              <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
-                            </div>
-                            <div class="custom-file">
-                              <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
-                              <label class="custom-file-label" for="inputGroupFile01">Choose Total Hours file</label>
+                              <input type="file" class="custom-file-input" id="inputTotalHoursFile" aria-describedby="inputGroupFileAddon01" accept=".csv, .txt">
+                              <label class="custom-file-label" for="inputTotalHoursFile">Choose Total Hours file</label>
                             </div>
                           </div>
                         <input type="submit" class="btn btn-primary" value="Submit Files">
                     </form>
+                    {% if alert != "" %} 
+                        <div id="alert-message" class="alert alert-primary" role="alert">
+                            {{alert}}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
             <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
