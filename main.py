@@ -17,18 +17,22 @@ if (Path.cwd()/ DBNAME).exists():
 
 app = Flask(__name__)
 ### FLASK ### 
-@app.route("/index.html", methods=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def index():
     """
     renders the index.html file in flask 
     :return: renders file 
     """
     ALERT = ""
-    if request.form:
-        MEMBERHOURS = request.form.get("inputMemberHours")
-        OVETIME = request.form.get("inputOvertimeFile")
-        TOTALHOURS = request.form.get("inputTotalHoursFile")
-    return render_template("index.html")
+    if request.files:
+        MEMBERHOURS = request.files.get("inputMemberHours")
+        OVERTIME = request.files.get("inputOvertimeFile")
+        TOTALHOURS = request.files.get("inputTotalHoursFile")
+        if MEMBERHOURS != "" and OVERTIME != "" and TOTALHOURS != "":
+            ALERT = "Successfully added files into database! "
+        else:
+            ALERT = "Please upload the correct number of files! "
+    return render_template("index.html", alert=ALERT)
 
 @app.route("/data.html", methods=["GET", "POST"])
 def data():
@@ -38,10 +42,18 @@ def data():
     """
     return render_template("data.html")
 
-### SQLITE ###
-def createMemberHours():
+@app.route("/member.html", methods=["GET", "POST"])
+def member():
     """
-    creates table for the member hours file
+    renders the member.html file in flask 
+    :return: renders file 
+    """
+    return render_template("member.html")
+
+### SQLITE ###
+def createAllTables():
+    """
+    creates member hours table, overtime table, total hours table using respective files
     :return: None
     """
     global DBNAME
@@ -52,6 +64,20 @@ def createMemberHours():
             member_hours (
                 member_name TEXT NOT NULL,
                 total_hours INTEGER NOT NULL,
+            );
+    """)
+    CURSOR.execute("""
+        CREATE TABLE
+            overtime (
+                event_name TEXT NOT NULL,
+                overtime INTEGER NOT NULL,
+                total_duration INTEGER NOT NULL
+            );
+    """)
+    CURSOR.execute("""
+        CREATE TABLE
+            total_hours (
+                total_hours REAL NOT NULL
             );
     """)
     CONNECTION.commit()

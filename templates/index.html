@@ -12,12 +12,9 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
               <div class="navbar-nav">
-                <a class="nav-link active" href="index.html">Upload File <span class="sr-only">(current)</span></a>
+                <a class="nav-link active" href="/">Upload File <span class="sr-only">(current)</span></a>
                 <a class="nav-link" href="data.html">View All Data</a>
-                <form class="form-inline">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search for a Member" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-                  </form>
+                <a class="nav-link" href="/member.html">View Member Data</a>
               </div>
             </div>
           </nav>
@@ -28,7 +25,7 @@
                     <h1 class="display-4">Wage Calculator</h1>
                     <p class="lead">Welcome to the Wage Calculator! </p>
                     <h2>Upload New Data</h2>
-                    <form method="POST" action="/" enctype = "multipart/form-data">
+                    <form method="POST" action="/">
                       <div class="input-group mb-3">
                         <div class="custom-file">
                           <input type="file" class="custom-file-input" id="inputMemberHours" aria-describedby="inputGroupFileAddon01" accept=".csv, .txt">
