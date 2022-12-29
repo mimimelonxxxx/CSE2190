@@ -40,15 +40,34 @@ def index():
     """
     ALERT = ""
     if request.method == 'POST': 
-        if ('inputRegularHours' or "inputOvertimeFile" or "inputSales" or "inputProduction" or "inputSummary" or "inputTotalHoursFile")not in request.files:
-            ALERT = "Please upload all files!"
         REGULARFILE = request.files['inputRegularHours']
-        if REGULARFILE.filename == '':
-            ALERT = "Please select files!"
-        if REGULARFILE and allowed_file(REGULARFILE.filename):
-            FILENAME = secure_filename(REGULARFILE.filename)
-            REGULARFILE.save(os.path.join(app.config['UPLOADFOLDER'], FILENAME))
-            ALERT = "Regular Hours file uploaded!"
+        OVERTIMEFILE = request.files['inputOvertimeFile']
+        SALESFILE = request.files['inputSales']
+        PRODUCTIONFILE = request.files['inputProduction']
+        SUMMARYFILE = request.files['inputSummary']
+        TOTALFILE = request.files['inputTotalHoursFile']
+        if REGULARFILE.filename == '' or OVERTIMEFILE.filename == "" or SALESFILE.filename == "" or PRODUCTIONFILE.filename == "" or SUMMARYFILE.filename == "" or TOTALFILE.filename == "":
+            ALERT = "Please select all files!"
+        if REGULARFILE and allowed_file(REGULARFILE.filename) and OVERTIMEFILE and allowed_file(OVERTIMEFILE.filename) and SALESFILE and allowed_file(SALESFILE.filename) and PRODUCTIONFILE and allowed_file(PRODUCTIONFILE.filename) and SUMMARYFILE and allowed_file(SUMMARYFILE.filename) and TOTALFILE and allowed_file(TOTALFILE.filename):
+            REGULARFILENAME = secure_filename(REGULARFILE.filename)
+            REGULARFILE.save(os.path.join(app.config['UPLOADFOLDER'], REGULARFILENAME))
+
+            OVERTIMEFILENAME = secure_filename(OVERTIMEFILE.filename)
+            OVERTIMEFILE.save(os.path.join(app.config['UPLOADFOLDER'], OVERTIMEFILENAME))
+
+            SALESFILENAME = secure_filename(SALESFILE.filename)
+            SALESFILE.save(os.path.join(app.config['UPLOADFOLDER'], SALESFILENAME))
+
+            PRODUCTIONFILENAME = secure_filename(PRODUCTIONFILE.filename)
+            PRODUCTIONFILE.save(os.path.join(app.config['UPLOADFOLDER'], PRODUCTIONFILENAME))
+
+            SUMMARYFILENAME = secure_filename(SUMMARYFILE.filename)
+            SUMMARYFILE.save(os.path.join(app.config['UPLOADFOLDER'], SUMMARYFILENAME))
+
+            TOTALFILENAME = secure_filename(TOTALFILE.filename)
+            TOTALFILE.save(os.path.join(app.config['UPLOADFOLDER'], TOTALFILENAME))
+            
+            ALERT = "All files have been uploaded!"
     return render_template("index.html", alert=ALERT)
     
 
