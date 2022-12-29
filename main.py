@@ -4,9 +4,19 @@ title: Wages Calculator
 date-created: 2022-12-13
 """
 # Need to download Jinja and Flask beforehand
-from flask import Flask, render_template, request, redirect
+import os
+from flask import Flask, render_template, request, redirect, flash, url_for
+from werkzeug.utils import secure_filename # security measure 
 from pathlib import Path
 import sqlite3
+
+"""
+Notes to self:
+- every time the user uploads files, they must upload all files or it will not update
+- every time the user uploads files and they work, the database will delete itself and a new database will be created 
+- if these constraints are not met, nothing will happen *atomicity* 
+- somehow need to get open(file) and file.readlines with flask 
+"""
 
 ### VARIABLES ###
 DBNAME = "wages_calculator.db"
@@ -15,7 +25,12 @@ FIRSTRUN = True
 if (Path.cwd()/ DBNAME).exists():
     FIRSTRUN = False
 
+UPLOADFOLDER = 'C:/Users/cryst/.vscode/CSE2190' # use your own file route 
+ALLOWEDEXTENSIONS = {'csv', 'txt'}
+
 app = Flask(__name__)
+app.config['UPLOADFOLDER'] = UPLOADFOLDER
+
 ### FLASK ### 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -24,15 +39,18 @@ def index():
     :return: renders file 
     """
     ALERT = ""
-    if request.files:
-        MEMBERHOURS = request.files.get("inputMemberHours")
-        OVERTIME = request.files.get("inputOvertimeFile")
-        TOTALHOURS = request.files.get("inputTotalHoursFile")
-        if MEMBERHOURS != "" and OVERTIME != "" and TOTALHOURS != "":
-            ALERT = "Successfully added files into database! "
-        else:
-            ALERT = "Please upload the correct number of files! "
+    if request.method == 'POST': 
+        if ('inputRegularHours' or "inputOvertimeFile" or "inputSales" or "inputProduction" or "inputSummary" or "inputTotalHoursFile")not in request.files:
+            ALERT = "Please upload all files!"
+        REGULARFILE = request.files['inputRegularHours']
+        if REGULARFILE.filename == '':
+            ALERT = "Please select files!"
+        if REGULARFILE and allowed_file(REGULARFILE.filename):
+            FILENAME = secure_filename(REGULARFILE.filename)
+            REGULARFILE.save(os.path.join(app.config['UPLOADFOLDER'], FILENAME))
+            ALERT = "Regular Hours file uploaded!"
     return render_template("index.html", alert=ALERT)
+    
 
 @app.route("/data.html", methods=["GET", "POST"])
 def data():
@@ -50,38 +68,12 @@ def member():
     """
     return render_template("member.html")
 
+### FUNCTIONS ### 
+def allowed_file(FILENAME):
+    return '.' in FILENAME and \
+           FILENAME.rsplit('.', 1)[1].lower() in ALLOWEDEXTENSIONS # splits the filename at the . and checks if it can be used
+
 ### SQLITE ###
-def createAllTables():
-    """
-    creates member hours table, overtime table, total hours table using respective files
-    :return: None
-    """
-    global DBNAME
-    CONNECTION = sqlite3.connect(DBNAME)
-    CURSOR = CONNECTION.cursor()
-    CURSOR.execute("""
-        CREATE TABLE 
-            member_hours (
-                member_name TEXT NOT NULL,
-                total_hours INTEGER NOT NULL,
-            );
-    """)
-    CURSOR.execute("""
-        CREATE TABLE
-            overtime (
-                event_name TEXT NOT NULL,
-                overtime INTEGER NOT NULL,
-                total_duration INTEGER NOT NULL
-            );
-    """)
-    CURSOR.execute("""
-        CREATE TABLE
-            total_hours (
-                total_hours REAL NOT NULL
-            );
-    """)
-    CONNECTION.commit()
-    CONNECTION.close()
 
 # INPUTS # 
 
