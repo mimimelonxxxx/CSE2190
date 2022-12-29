@@ -73,6 +73,7 @@ def index():
                 setupDatabase(REGULARDATA, OVERTIMEDATA, SUMMARYDATA, TOTALDATA, PRODUCTIONDATA, SALESDATA)
                 TOTALWAGES = calculateWages()
                 wageDatabase(TOTALWAGES)
+                FIRSTRUN = False
     return render_template("index.html", alert=ALERT)
 
 @app.route("/data.html", methods=["GET", "POST"])
@@ -467,7 +468,7 @@ def calculateWages() -> list:
         TOTALWAGES.append(MEMBERWAGES)
     
     # distributes any overcompensations equally 
-    if TOTALPERCENTAGE < 0:
+    if TOTALPERCENTAGE != 0:
         for i in range(len(TOTALWAGES)):
             PERCENTAGE = TOTALPERCENTAGE / len(TOTALWAGES)
             TOTALWAGES[i] = TOTALWAGES[i] + PERCENTAGE
