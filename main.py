@@ -4,7 +4,7 @@ title: Wages Calculator
 date-created: 2022-12-13
 """
 # Need to download Jinja and Flask beforehand
-from flask import Flask, render_template, request, redirect, flash, url_for
+from flask import Flask, render_template, request
 from werkzeug.utils import secure_filename # security measure for file upload 
 from pathlib import Path
 import os 
