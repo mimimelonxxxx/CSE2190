@@ -4,21 +4,24 @@ title: Wages Calculator
 date-created: 2022-12-13
 """
 # Need to download Jinja and Flask beforehand
-import os
 from flask import Flask, render_template, request, redirect, flash, url_for
 from werkzeug.utils import secure_filename # security measure for file upload 
 from pathlib import Path
+import os 
 import sqlite3
 
 ### VARIABLES ###
 DBNAME = "wages_calculator.db"
 
+# if replacing data, you will need to delete all database files, csv files, and txt files
 FIRSTRUN = True
 if (Path.cwd()/ DBNAME).exists():
     FIRSTRUN = False
 
 UPLOADFOLDER = 'C:/Users/cryst/.vscode/CSE2190' # change this to your own file route 
 ALLOWEDEXTENSIONS = {'csv', 'txt'}
+DATAHEADINGS = []
+DATACOLUMNS = []
 
 app = Flask(__name__)
 app.config['UPLOADFOLDER'] = UPLOADFOLDER
@@ -27,7 +30,7 @@ app.config['UPLOADFOLDER'] = UPLOADFOLDER
 @app.route("/", methods=["GET", "POST"])
 def index():
     """
-    renders the index.html file in flask 
+    renders the index.html file in flask, uploads files into file folder
     :return: renders file 
     """
     global FIRSTRUN, REGULARFILENAME, OVERTIMEFILENAME, PRODUCTIONFILENAME, SALESFILENAME, SUMMARYFILENAME, TOTALFILENAME
@@ -44,6 +47,7 @@ def index():
         if REGULARFILE.filename == '' or OVERTIMEFILE.filename == "" or SALESFILE.filename == "" or PRODUCTIONFILE.filename == "" or SUMMARYFILE.filename == "" or TOTALFILE.filename == "":
             ALERT = "Please select all files!"
         if REGULARFILE and allowed_file(REGULARFILE.filename) and OVERTIMEFILE and allowed_file(OVERTIMEFILE.filename) and SALESFILE and allowed_file(SALESFILE.filename) and PRODUCTIONFILE and allowed_file(PRODUCTIONFILE.filename) and SUMMARYFILE and allowed_file(SUMMARYFILE.filename) and TOTALFILE and allowed_file(TOTALFILE.filename):
+            
             # checks if all files have been selected and uploads files 
             REGULARFILENAME = secure_filename(REGULARFILE.filename)
             REGULARFILE.save(os.path.join(app.config['UPLOADFOLDER'], REGULARFILENAME))
@@ -64,15 +68,13 @@ def index():
             TOTALFILE.save(os.path.join(app.config['UPLOADFOLDER'], TOTALFILENAME))
             # outputs # 
             ALERT = "All files have been uploaded!"
-            if not FIRSTRUN:
-                # deletes the existing database so that it can be updated
-                os.remove(DBNAME)
-                FIRSTRUN = True
             if FIRSTRUN:
                 REGULARDATA, OVERTIMEDATA, SUMMARYDATA, TOTALDATA, PRODUCTIONDATA, SALESDATA = extractFiles(REGULARFILENAME, TOTALFILENAME, OVERTIMEFILENAME, SUMMARYFILENAME, PRODUCTIONFILENAME, SALESFILENAME)
                 setupDatabase(REGULARDATA, OVERTIMEDATA, SUMMARYDATA, TOTALDATA, PRODUCTIONDATA, SALESDATA)
                 TOTALWAGES = calculateWages()
                 wageDatabase(TOTALWAGES)
+                global DATAHEADINGS, DATACOLUMNS
+                DATAHEADINGS, DATACOLUMNS = getMemberData(REGULARDATA, OVERTIMEDATA, PRODUCTIONDATA, SALESDATA, TOTALWAGES)
                 FIRSTRUN = False
     return render_template("index.html", alert=ALERT)
 
@@ -82,7 +84,12 @@ def data():
     renders the data.html file in flask 
     :return: renders file 
     """
-    return render_template("data.html")
+    global DATAHEADINGS, DATACOLUMNS
+    ALERT = ""
+    if DATAHEADINGS == [] or DATACOLUMNS == []:
+        ALERT = "Please upload files first!"
+        return render_template("data.html", alert=ALERT)
+    return render_template("data.html", headings=DATAHEADINGS, columns=DATACOLUMNS, alert=ALERT)
 
 @app.route("/member.html", methods=["GET", "POST"])
 def member():
@@ -90,7 +97,25 @@ def member():
     renders the member.html file in flask 
     :return: renders file 
     """
-    return render_template("member.html")
+    global DATAHEADINGS, DATACOLUMNS
+    ALERT = ""
+    if DATAHEADINGS == [] or DATACOLUMNS == []:
+        ALERT = "Please upload files first!"
+        return render_template("member.html", alert=ALERT)
+    elif not (DATAHEADINGS == [] or DATACOLUMNS == []) and request.form:
+        MEMBERNAME = request.form.get("member_name")
+        NETPROFIT = request.form.get("net_profit")
+        if checkName(MEMBERNAME) and NETPROFIT == "":
+            WAGE = queryWages(MEMBERNAME)
+            return render_template("member.html", membername=MEMBERNAME, alert=ALERT, wage=WAGE)
+        elif checkName(MEMBERNAME) and checkFloat(NETPROFIT):
+            WAGE = queryWages(MEMBERNAME)
+            NETPROFIT = float(NETPROFIT)
+            DOLLARAMOUNT = NETPROFIT * (WAGE / 100) 
+            return render_template("member.html", membername=MEMBERNAME, alert=ALERT, wage=WAGE, dollars=DOLLARAMOUNT)
+        else:
+            ALERT = "Please input a valid name!"
+    return render_template("member.html", alert=ALERT)
 
 ### FUNCTIONS ### 
 def allowed_file(FILENAME):
@@ -505,13 +530,101 @@ def wageDatabase(TOTALWAGES) -> None:
 
     CONNECTION.commit()
 
-# OUTPUTS #
+def getMemberData(REGULARDATA, OVERTIMEDATA, PRODUCTIONDATA, SALESDATA, TOTALWAGES) -> list:
+    """
+    organizes data into one list for easy viewing
+    :param REGULARDATA: list
+    :param OVERTIMEDATA: list
+    :param SUMMARYDATA: list
+    :param TOTALDATA: list 
+    :param PRODUCTIONDATA: list
+    :param SALESDATA: list
+    :param TOTALWAGES: list
+    :return: HEADINGS list, COLUMNS list
+    """
+    HEADINGS = []
+    COLUMNS = []
+    
+    # first, let's make the headings 
+    for i in range(len(REGULARDATA[0])):
+        HEADINGS.append(REGULARDATA[0][i])
+    
+    for i in range(1, len(OVERTIMEDATA[0])):
+        HEADINGS.append(OVERTIMEDATA[0][i])
+
+    for i in range(1, len(PRODUCTIONDATA[0])):
+        HEADINGS.append(PRODUCTIONDATA[0][i])
+    
+    for i in range(1, len(SALESDATA[0])):
+        HEADINGS.append(SALESDATA[0][i])
+    
+    HEADINGS.append("Percent Wages")
+
+    # add data that is in each column 
+
+    for i in range(1, len(REGULARDATA)):
+        COLUMNS.append(REGULARDATA[i])
+    
+    for i in range(1, len(OVERTIMEDATA)):
+        for j in range(1, len(OVERTIMEDATA[i])):
+            COLUMNS[i-1].append(OVERTIMEDATA[i][j])
+    
+    for i in range(1, len(PRODUCTIONDATA)):
+        for j in range(1, len(PRODUCTIONDATA[i])):
+            COLUMNS[i-1].append(PRODUCTIONDATA[i][j])
+
+    for i in range(1, len(SALESDATA)):
+        for j in range(1, len(SALESDATA[i])):
+            COLUMNS[i-1].append(SALESDATA[i][j])
+    
+    for i in range(len(TOTALWAGES)):
+        COLUMNS[i].append(TOTALWAGES[i])
+
+    return HEADINGS, COLUMNS
+
+def checkName(NAME) -> bool:
+    """
+    checks if the name is in the database
+    :param NAME: str
+    :return: bool
+    """
+    CONNECTION = sqlite3.connect(DBNAME)
+    CURSOR = CONNECTION.cursor()
+
+    try:
+        CURSOR.execute(f"""
+            SELECT
+                percent_wages
+            FROM
+                wages
+            WHERE
+                member_name = "{NAME}";
+        """).fetchone()
+        return True
+    except TypeError:
+        return False
+
+def queryWages(NAME) -> None:
+    """
+    queries the wages table for a members wages
+    :param NAME: str
+    :return: None
+    """
+    CONNECTION = sqlite3.connect(DBNAME)
+    CURSOR = CONNECTION.cursor()
+    # processing # 
+    WAGE = CURSOR.execute(f"""
+        SELECT
+            percent_wages
+        FROM
+            wages
+        WHERE
+            member_name = "{NAME}";
+    """).fetchone()
+
+    # outputs # 
+    return WAGE[0]
 
 ### MAIN PROGRAM CODE ### 
 if __name__ == "__main__":
     app.run(debug=True)
-    # INPUTS #
-    
-    # PROCESSING # 
-
-    # OUTPUTS #
