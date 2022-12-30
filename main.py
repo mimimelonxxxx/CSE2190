@@ -134,6 +134,28 @@ def checkFloat(VALUE) -> bool:
     except ValueError:
         return False
 
+def checkName(NAME) -> bool:
+    """
+    checks if the name is in the database
+    :param NAME: str
+    :return: bool
+    """
+    CONNECTION = sqlite3.connect(DBNAME)
+    CURSOR = CONNECTION.cursor()
+
+    try:
+        CURSOR.execute(f"""
+            SELECT
+                percent_wages
+            FROM
+                wages
+            WHERE
+                member_name = "{NAME}";
+        """).fetchone()
+        return True
+    except TypeError:
+        return False
+
 ### SQLITE ###
 
 # INPUTS # 
@@ -582,28 +604,6 @@ def getMemberData(REGULARDATA, OVERTIMEDATA, PRODUCTIONDATA, SALESDATA, TOTALWAG
 
     return HEADINGS, COLUMNS
 
-def checkName(NAME) -> bool:
-    """
-    checks if the name is in the database
-    :param NAME: str
-    :return: bool
-    """
-    CONNECTION = sqlite3.connect(DBNAME)
-    CURSOR = CONNECTION.cursor()
-
-    try:
-        CURSOR.execute(f"""
-            SELECT
-                percent_wages
-            FROM
-                wages
-            WHERE
-                member_name = "{NAME}";
-        """).fetchone()
-        return True
-    except TypeError:
-        return False
-
 def queryWages(NAME) -> None:
     """
     queries the wages table for a members wages
@@ -612,7 +612,7 @@ def queryWages(NAME) -> None:
     """
     CONNECTION = sqlite3.connect(DBNAME)
     CURSOR = CONNECTION.cursor()
-    # processing # 
+    
     WAGE = CURSOR.execute(f"""
         SELECT
             percent_wages
@@ -622,7 +622,6 @@ def queryWages(NAME) -> None:
             member_name = "{NAME}";
     """).fetchone()
 
-    # outputs # 
     return WAGE[0]
 
 ### MAIN PROGRAM CODE ### 
