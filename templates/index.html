@@ -28,41 +28,83 @@
                     <form method="POST" action="/" enctype="multipart/form-data">
                       <div class="input-group mb-3">
                         <div class="custom-file">
-                          <input type="file" class="custom-file-input" name="inputRegularHours" aria-describedby="inputGroupFileAddon01" accept=".csv, .txt">
+                          <input type="file" class="custom-file-input" id="inputRegularHours" name="inputRegularHours" aria-describedby="inputGroupFileAddon01" accept=".csv, .txt" onchange="displayFileName(this)">
                           <label class="custom-file-label" for="inputRegularHours" aria-describedby="inputGroupFileAddon02">Choose Regular Hours file</label>
                         </div>
                       </div>
+                      <script>
+                        function displayFileName(input) {
+                            var fileName = input.files[0].name;
+                            var inputLabel = input.parentNode.querySelector(".custom-file-label");
+                            inputLabel.innerHTML = fileName;
+                        }
+                    </script>
                       <div class="input-group mb-3">
                         <div class="custom-file">
-                          <input type="file" class="custom-file-input" name="inputOvertimeFile" aria-describedby="inputGroupFileAddon01" accept=".csv, .txt">
+                          <input type="file" class="custom-file-input" name="inputOvertimeFile" aria-describedby="inputGroupFileAddon01" accept=".csv, .txt" onchange="displayFileName(this)">
                           <label class="custom-file-label" for="inputOvertimeFile">Choose Overtime Hours file</label>
                         </div>
                       </div>
+                      <script>
+                        function displayFileName(input) {
+                            var fileName = input.files[0].name;
+                            var inputLabel = input.parentNode.querySelector(".custom-file-label");
+                            inputLabel.innerHTML = fileName;
+                        }
+                    </script>
                       <div class="input-group mb-3">
                         <div class="custom-file">
-                          <input type="file" class="custom-file-input" name="inputSales" aria-describedby="inputGroupFileAddon01" accept=".csv, .txt">
+                          <input type="file" class="custom-file-input" name="inputSales" aria-describedby="inputGroupFileAddon01" accept=".csv, .txt" onchange="displayFileName(this)">
                           <label class="custom-file-label" for="inputSales" aria-describedby="inputGroupFileAddon02">Choose Sales file</label>
                         </div>
                       </div>
+                      <script>
+                        function displayFileName(input) {
+                            var fileName = input.files[0].name;
+                            var inputLabel = input.parentNode.querySelector(".custom-file-label");
+                            inputLabel.innerHTML = fileName;
+                        }
+                    </script>
                       <div class="input-group mb-3">
                         <div class="custom-file">
-                          <input type="file" class="custom-file-input" name="inputProduction" aria-describedby="inputGroupFileAddon01" accept=".csv, .txt">
+                          <input type="file" class="custom-file-input" name="inputProduction" aria-describedby="inputGroupFileAddon01" accept=".csv, .txt" onchange="displayFileName(this)">
                           <label class="custom-file-label" for="inputProduction" aria-describedby="inputGroupFileAddon02">Choose Production file</label>
                         </div>
                       </div>
+                      <script>
+                        function displayFileName(input) {
+                            var fileName = input.files[0].name;
+                            var inputLabel = input.parentNode.querySelector(".custom-file-label");
+                            inputLabel.innerHTML = fileName;
+                        }
+                    </script>
                       <div class="input-group mb-3">
                         <div class="custom-file">
-                          <input type="file" class="custom-file-input" name="inputSummary" aria-describedby="inputGroupFileAddon01" accept=".csv, .txt">
+                          <input type="file" class="custom-file-input" name="inputSummary" aria-describedby="inputGroupFileAddon01" accept=".csv, .txt" onchange="displayFileName(this)">
                           <label class="custom-file-label" for="inputSummary" aria-describedby="inputGroupFileAddon02">Choose Summary file</label>
                         </div>
                       </div>
+                      <script>
+                        function displayFileName(input) {
+                            var fileName = input.files[0].name;
+                            var inputLabel = input.parentNode.querySelector(".custom-file-label");
+                            inputLabel.innerHTML = fileName;
+                        }
+                    </script>
                       <div class="input-group mb-3">
                         <div class="custom-file">
-                          <input type="file" class="custom-file-input" name="inputTotalHoursFile" aria-describedby="inputGroupFileAddon01" accept=".csv, .txt">
+                          <input type="file" class="custom-file-input" name="inputTotalHoursFile" aria-describedby="inputGroupFileAddon01" accept=".csv, .txt" onchange="displayFileName(this)">
                           <label class="custom-file-label" for="inputTotalHoursFile">Choose Total Hours file</label>
                         </div>
                       </div>
-                        <input type="submit" class="btn btn-primary" value="Submit Files">
+                      <script>
+                        function displayFileName(input) {
+                            var fileName = input.files[0].name;
+                            var inputLabel = input.parentNode.querySelector(".custom-file-label");
+                            inputLabel.innerHTML = fileName;
+                        }
+                    </script>
+                      <input type="submit" class="btn btn-primary" value="Submit Files">
                     </form>
                     {% if alert != "" %} 
                         <div id="alert-message" class="alert alert-primary" role="alert">
