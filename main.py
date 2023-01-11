@@ -89,7 +89,8 @@ def data():
     if DATAHEADINGS == [] or DATACOLUMNS == []:
         ALERT = "Please upload files first!"
         return render_template("data.html", alert=ALERT)
-    return render_template("data.html", headings=DATAHEADINGS, columns=DATACOLUMNS, alert=ALERT)
+    SUMMARYHEADINGS, SUMMARYCOLUMNS = getSummaryData()
+    return render_template("data.html", headings=DATAHEADINGS, columns=DATACOLUMNS, alert=ALERT, summaryheadings=SUMMARYHEADINGS, summarycolumns=SUMMARYCOLUMNS)
 
 @app.route("/member.html", methods=["GET", "POST"])
 def member():
@@ -150,8 +151,8 @@ def checkName(NAME) -> bool:
             FROM
                 wages
             WHERE
-                member_name = "{NAME}";
-        """).fetchone()
+                member_name = ?;
+        """, [NAME]).fetchone()
         return True
     except TypeError:
         return False
@@ -263,7 +264,7 @@ def setupDatabase(REGULARDATA, OVERTIMEDATA, SUMMARYDATA, TOTALDATA, PRODUCTIOND
     :param SALESDATA: list
     :return: None
     """
-
+    global DBNAME
     CONNECTION = sqlite3.connect(DBNAME)
     CURSOR = CONNECTION.cursor()
 
@@ -436,7 +437,7 @@ def calculateWages() -> list:
     calculates percentage wages for all members in the database 
     :return: list (each members wages in order)
     """
-
+    global DBNAME
     CONNECTION = sqlite3.connect(DBNAME)
     CURSOR = CONNECTION.cursor()
 
@@ -529,7 +530,7 @@ def wageDatabase(TOTALWAGES) -> None:
     creates a database with wage information 
     :return: None
     """
-    
+    global DBNAME
     CONNECTION = sqlite3.connect(DBNAME)
     CURSOR = CONNECTION.cursor()
 
@@ -623,6 +624,25 @@ def queryWages(NAME) -> None:
     """).fetchone()
 
     return WAGE[0]
+
+def getSummaryData() -> list: 
+    """
+    queries database for summary data and organizes it so it can be printed into a table
+    :return: list 
+    """
+    global DBNAME
+    CONNECTION = sqlite3.connect(DBNAME)
+    CURSOR = CONNECTION.cursor()
+    SUMMARYDATA = CURSOR.execute("""
+        SELECT 
+            * 
+        FROM
+            summary
+    """).fetchall()
+
+    HEADINGS = ["Name of Event", "Overtime", "Total Duration", "Total Attendance"]
+
+    return HEADINGS, SUMMARYDATA
 
 ### MAIN PROGRAM CODE ### 
 if __name__ == "__main__":
