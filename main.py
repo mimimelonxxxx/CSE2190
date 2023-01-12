@@ -113,6 +113,7 @@ def member():
             WAGE = queryWages(MEMBERNAME)
             NETPROFIT = float(NETPROFIT)
             DOLLARAMOUNT = NETPROFIT * (WAGE / 100) 
+            DOLLARAMOUNT = round(DOLLARAMOUNT, 2)
             return render_template("member.html", membername=MEMBERNAME, alert=ALERT, wage=WAGE, dollars=DOLLARAMOUNT)
         else:
             ALERT = "Please input a valid name!"
