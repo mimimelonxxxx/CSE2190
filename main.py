@@ -158,6 +158,16 @@ def checkName(NAME) -> bool:
     except TypeError:
         return False
 
+def checkTitle(TITLE):
+    """
+    checks titles for sqlite injection attacks 
+    :param TITLE: str 
+    :return: str 
+    """
+    while ";" in TITLE:
+        TITLE = TITLE.replace(';', '')
+    return TITLE
+
 ### SQLITE ###
 
 # INPUTS # 
@@ -290,6 +300,7 @@ def setupDatabase(REGULARDATA, OVERTIMEDATA, SUMMARYDATA, TOTALDATA, PRODUCTIOND
 
     # create multiple tables for each row of data each time
     for i in range(1, len(REGULARDATA[0])-1):
+        REGULARDATA[0][i] = checkTitle(REGULARDATA[0][i])
         CURSOR.execute(f"""
             CREATE TABLE
                 {REGULARDATA[0][i]} (
@@ -328,6 +339,7 @@ def setupDatabase(REGULARDATA, OVERTIMEDATA, SUMMARYDATA, TOTALDATA, PRODUCTIOND
 
     # create multiple tables for each row of data each time
     for i in range(1, len(OVERTIMEDATA[0])-1):
+        OVERTIMEDATA[0][i] = checkTitle(OVERTIMEDATA[0][i])
         CURSOR.execute(f"""
             CREATE TABLE
                 {OVERTIMEDATA[0][i]} (
